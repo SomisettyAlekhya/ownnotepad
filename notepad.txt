@@ -1,0 +1,93 @@
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+class mMain extends Frame implements ActionListener {
+    private TextArea tst;
+    private Menu file;
+    private MenuItem New,Open,Save,Exit;
+    private MenuBar mb=new MenuBar();
+    public mMain() {
+        file = new Menu("File");
+        New = new MenuItem("New");
+        Open = new MenuItem("Open");
+        Save = new MenuItem("Save");
+        Exit = new MenuItem("Exit");
+        file.add(New);
+        file.add(Open);
+        file.add(Save);
+        file.add(Exit);
+        mb.add(file);
+        New.addActionListener(this);
+        Open.addActionListener(this);
+        Save.addActionListener(this);
+        Exit.addActionListener(this);
+        setTitle("NOTEPAD");
+        setSize(400, 400);
+        setLocation(100, 100);
+        setMenuBar(mb);
+        tst = new TextArea();
+        add(tst);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == New) {
+            tst.setText(" ");
+        } else if (e.getSource() == Open) {
+            try {
+                FileDialog fd = new FileDialog(this, "Open, File", FileDialog.LOAD);
+                fd.setVisible(true);
+                String s = fd.getDirectory();
+                String fname = fd.getFile();
+                FileInputStream fis = new FileInputStream(s + fname);
+                DataInputStream dis = new DataInputStream(fis);
+                String str = " ", msg = " ";
+                while ((str = dis.readLine()) != null) {
+                    msg = msg + str;
+                    msg += "\n";
+                }
+                tst.setText(msg);
+                dis.close();
+            } catch (Exception e1) {
+                System.out.println(e1);
+
+            }
+        } else if (e.getSource() == Save) {
+            try {
+                FileDialog fd = new FileDialog(this, "Save, File", FileDialog.LOAD);
+                fd.setVisible(true);
+                String txt = tst.getText();
+                String s = fd.getDirectory();
+                String fname = fd.getFile();
+                FileOutputStream fis = new FileOutputStream(s + fname);
+                DataOutputStream dis = new DataOutputStream(fis);
+                dis.writeBytes(txt);
+                dis.close();
+            } catch (Exception e1) {
+                System.out.println(e1);
+            }
+        } else if (e.getSource() == Exit) {
+            System.exit(0);
+        }
+
+    }
+    }
+    public class Main{
+    public static void main(String[] args) {
+    new mMain().setVisible(true);
+
+    }
+    }
